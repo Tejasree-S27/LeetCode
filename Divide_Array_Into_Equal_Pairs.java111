@@ -1,0 +1,16 @@
+class Solution {
+    public boolean divideArray(int[] nums) {
+        int[] freq=new int[501];
+        // Count frequency of each number
+        for(int num : nums) {
+            freq[num]++;
+        }
+        // Every number must appear an even number of times
+        for(int count : freq) {
+            if(count%2!=0) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
