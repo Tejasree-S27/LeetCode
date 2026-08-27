@@ -1,51 +1,51 @@
 class Solution {
-    public String lexicographicallySmallest(String s, String target) {
-        int n=s.length();
-        int[] freq=new int[26];
-        for(char c : s.toCharArray()) {
-            freq[c-'a']++;
-        }
-        char[] result=new char[n];
-        // Try to match target from left to right
-        for(int i=0;i<n;i++) {
-            int current=target.charAt(i)-'a';
-            if(freq[current]>0) {
-                result[i]=target.charAt(i);
-                freq[current]--;
-            } else {
-                // Cannot continue matching target
-                return buildGreater(result,freq,target,i);
+    public String lexGreaterPermutation(String s, String target) {
+        int[] freq = new int[26];
+        for (char c : s.toCharArray())
+            freq[c - 'a']++;
+        StringBuilder ans = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            int x = target.charAt(i) - 'a';
+            // First try to match target
+            if (freq[x] > 0) {
+                ans.append(target.charAt(i));
+                freq[x]--;
+                continue;
             }
-        }
-        // We matched target exactly.
-        // Need the next lexicographically greater permutation.
-        return buildGreater(result,freq,target,n);
-    }
-    private String buildGreater(char[] result,int[] freq,String target,int length) {
-        // Go backwards and restore characters
-        for(int i=length-1;i>=0;i--) {
-            // Put back the character used at this position
-            freq[result[i]-'a']++;
-            int current=target.charAt(i)-'a';
-            // Find the smallest available character greater than target[i]
-            for(int c=current+1;c<26;c++) {
-                if(freq[c]>0) {
-                    result[i]=(char)('a'+c);
+            // Cannot match, try greater character here
+            for (int c = x + 1; c < 26; c++) {
+                if (freq[c] > 0) {
+                    ans.append((char) ('a' + c));
                     freq[c]--;
-                    // Fill remaining positions with smallest characters
-                    StringBuilder answer=new StringBuilder();
-                    for(int j=0;j<=i;j++) {
-                        answer.append(result[j]);
-                    }
-                    for(int j=0;j<26;j++) {
-                        while (freq[j]-->0) {
-                            answer.append((char)('a'+j));
-                        }
-                    }
-                    return answer.toString();
+                    return addRemaining(ans, freq);
+                }
+            }
+            // Backtrack
+            return backtrack(ans, freq, target);
+        }
+        // Exact target was formed, so backtrack
+        return backtrack(ans, freq, target);
+    }
+    private String backtrack(StringBuilder ans, int[] freq, String target) {
+        for (int i = ans.length() - 1; i >= 0; i--) {
+            freq[ans.charAt(i) - 'a']++;
+            ans.deleteCharAt(i);
+            int x = target.charAt(i) - 'a';
+            for (int c = x + 1; c < 26; c++) {
+                if (freq[c] > 0) {
+                    ans.append((char) ('a' + c));
+                    freq[c]--;
+                    return addRemaining(ans, freq);
                 }
             }
         }
         return "";
+    }
+    private String addRemaining(StringBuilder ans, int[] freq) {
+        for (int i = 0; i < 26; i++) {
+            while (freq[i]-- > 0)
+                ans.append((char) ('a' + i));
+        }
+        return ans.toString();
     }
 }
