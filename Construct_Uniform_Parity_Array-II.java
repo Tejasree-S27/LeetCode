@@ -1,5 +1,5 @@
 class Solution {
-    public boolean canMakeUniformParity(int[] nums1) {
+    public boolean uniformArray(int[] nums1) {
         int minOdd = Integer.MAX_VALUE;
         int minEven = Integer.MAX_VALUE;
         for (int num : nums1) {
@@ -9,12 +9,12 @@ class Solution {
                 minOdd = Math.min(minOdd, num);
             }
         }
-        // All odd or all even
-        if (minOdd == Integer.MAX_VALUE ||
+        // All elements already have the same parity
+        if (minOdd == Integer.MAX_VALUE || 
             minEven == Integer.MAX_VALUE) {
             return true;
         }
-        // Can convert all even numbers to odd
+        // Check if smallest odd is smaller than smallest even
         return minOdd < minEven;
     }
 }
